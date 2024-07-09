@@ -1,15 +1,13 @@
-version: '3.8'
+version: '3.9'
 services:
   app:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: laravel-app
     restart: unless-stopped
     working_dir: /var/www
     volumes:
       - ./backend:/var/www
-      - ./backend/vendor:/var/www/vendor
     networks:
       - app-network
     ports:
@@ -17,8 +15,9 @@ services:
 
   webserver:
     image: nginx:alpine
-    container_name: nginx-webserver
     restart: unless-stopped
+    depends_on:
+      - app
     ports:
       - "8000:80"
     volumes:
@@ -28,8 +27,7 @@ services:
       - app-network
 
   db:
-    image: mysql:8
-    container_name: mysql-db
+    image: mysql:8.0
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: laravel
@@ -40,6 +38,35 @@ services:
       - "3306:3306"
     volumes:
       - dbdata:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     networks:
       - app-network
 

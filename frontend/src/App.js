@@ -1,13 +1,14 @@
 import React from 'react';
-import CardGrid from './components/CardGrid'; // Adjust the path as necessary
+import CardGrid from './components/CardGrid';
+import './index.scss';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Magic: The Gathering Cards</h1>
+      <header className="bg-gray-800 text-white p-4">
+        <h1 className="text-center text-2xl">Magic: The Gathering Cards</h1>
       </header>
-      <main>
+      <main className="p-4">
         <CardGrid />
       </main>
     </div>

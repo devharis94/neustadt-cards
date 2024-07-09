@@ -9,11 +9,10 @@ const CardGrid = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch available sets (this is an example, adjust endpoint as needed)
     const fetchSets = async () => {
       try {
-        const response = await axios.get('https://api.scryfall.com/sets');
-        setSets(response.data.data);
+        const response = await axios.get('/sets');
+        setSets(response.data);
       } catch (err) {
         setError(err);
       }
@@ -25,8 +24,8 @@ const CardGrid = () => {
   const fetchCards = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`https://api.scryfall.com/cards/search?q=set:${selectedSet}`);
-      setCards(response.data.data);
+      const response = await axios.post('/cards', { set: selectedSet });
+      setCards(response.data);
     } catch (err) {
       setError(err);
     } finally {
@@ -35,20 +34,33 @@ const CardGrid = () => {
   };
 
   return (
-    <div className="App">
-      <select onChange={e => setSelectedSet(e.target.value)}>
-        {sets.map(set => (
-          <option key={set.code} value={set.code}>{set.name}</option>
-        ))}
-      </select>
-      <button onClick={fetchCards}>Get Cards</button>
+    <div className="container mx-auto p-4">
+      <div className="mb-4">
+        <select
+          onChange={(e) => setSelectedSet(e.target.value)}
+          className="border p-2 rounded w-full"
+        >
+          <option value="">Select a set</option>
+          {sets.map((set) => (
+            <option key={set.id} value={set.code}>
+              {set.name}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={fetchCards}
+          className="mt-2 p-2 bg-blue-500 text-white rounded"
+        >
+          Get Cards
+        </button>
+      </div>
       {loading && <div>Loading...</div>}
       {error && <div>Error: {error.message}</div>}
-      <div className="card-grid">
-        {cards.map(card => (
-          <div key={card.id} className="card">
-            <img src={card.image_uris?.small} alt={card.name} />
-            <p>{card.name}</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {cards.map((card) => (
+          <div key={card.id} className="border p-4 rounded">
+            <img src={card.image_url} alt={card.name} className="w-full" />
+            <p className="mt-2">{card.name}</p>
           </div>
         ))}
       </div>
