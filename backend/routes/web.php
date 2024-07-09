@@ -1,7 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CardController;
+use App\Http\Controllers\SetController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('sets', [SetController::class, 'index']);
+Route::post('cards', [CardController::class, 'store']);
+Route::get('cards', [CardController::class, 'index']);
+
