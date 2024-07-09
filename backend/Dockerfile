@@ -1,4 +1,4 @@
-FROM php:8.1-fpm
+FROM php:8.2-fpm
 
 # Set working directory
 WORKDIR /var/www
@@ -15,7 +15,16 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
-    && docker-php-ext-install pdo mbstring exif pcntl bcmath gd
+    libpq-dev \
+    libzip-dev \
+    libmcrypt-dev \
+    libmagickwand-dev \
+    libmagickcore-dev \
+    libmagickwand-6.q16-6 \
+    libmagickcore-6.q16-6 \
+    libcurl4-openssl-dev \
+    pkg-config \
+    && docker-php-ext-install pdo mbstring exif pcntl bcmath gd pdo_mysql
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

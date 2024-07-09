@@ -3,11 +3,13 @@ services:
   app:
     build:
       context: ./backend
+      dockerfile: Dockerfile
     container_name: laravel-app
     restart: unless-stopped
     working_dir: /var/www
     volumes:
       - ./backend:/var/www
+      - ./backend/vendor:/var/www/vendor
     networks:
       - app-network
     ports:
@@ -26,7 +28,7 @@ services:
       - app-network
 
   db:
-    image: mysql:5.7
+    image: mysql:8
     container_name: mysql-db
     restart: unless-stopped
     environment:
