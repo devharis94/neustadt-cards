@@ -11,10 +11,12 @@ const CardGrid = () => {
   useEffect(() => {
     const fetchSets = async () => {
       try {
-        const response = await axios.get('/sets');
+        console.log('Fetching sets from: http://localhost:8000/sets');
+        const response = await axios.get('http://localhost:8000/sets');
         setSets(response.data);
       } catch (err) {
         setError(err);
+        console.error('Error fetching sets:', err);
       }
     };
 
@@ -24,10 +26,14 @@ const CardGrid = () => {
   const fetchCards = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('/cards', { set: selectedSet });
+      console.log('Posting to: http://localhost:8000/cards');
+      const response = await axios.post('http://localhost:8000/cards', 
+      { set: selectedSet }, 
+      { headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } });
       setCards(response.data);
     } catch (err) {
       setError(err);
+      console.error('Error fetching cards:', err);
     } finally {
       setLoading(false);
     }

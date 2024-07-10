@@ -13,7 +13,7 @@ services:
     ports:
       - "9000:9000"
 
-  webserver:
+  nginx:
     image: nginx:alpine
     restart: unless-stopped
     depends_on:
